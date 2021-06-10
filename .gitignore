@@ -1,3 +1,5 @@
 .direnv
 .envrc
 __pycache__
+*.csv
+*.bz2

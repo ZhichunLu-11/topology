@@ -3,6 +3,7 @@ import time
 from cli.common import DatasetFile
 import click
 import networkx as nx
+import pandas as pd
 from cli.parser import ChannelAnnouncement, ChannelUpdate, NodeAnnouncement
 from tqdm import tqdm
 from datetime import datetime
@@ -27,7 +28,7 @@ def restore(dataset, timestamp=None, fmt='dot'):
 
     """
     if timestamp is None:
-        timestamp =    time.time()
+        timestamp = time.time()
 
     cutoff = timestamp - 2 * 7 * 24 * 3600
     channels = {}
@@ -121,7 +122,8 @@ def restore(dataset, timestamp=None, fmt='dot'):
     for scid in todelete:
         del channels[scid]
 
-    nodes = [n for n in nodes.values() if n["in_degree"] > 0 or n['out_degree'] > 0]
+    nodes = [n for n in nodes.values() if n["in_degree"] >
+             0 or n['out_degree'] > 0]
 
     if len(channels) == 0:
         print(
@@ -137,6 +139,8 @@ def restore(dataset, timestamp=None, fmt='dot'):
     for scid, c in channels.items():
         g.add_edge(c["source"], c["destination"], scid=scid, **c)
 
+    pruned_edges = pd.DataFrame(channels).T
+    pruned_edges.to_csv(r'peruned_edges.csv', index=True, header=True)
     if fmt == 'dot':
         print(nx.nx_pydot.to_pydot(g))
 
