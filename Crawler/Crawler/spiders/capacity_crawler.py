@@ -30,78 +30,12 @@ class capacity_spider(scrapy.Spider):
         scids = self.get_scids()
         url = "https://1ml.com/search"
         for scid in scids:
-            # scid_bytes = scid.encode('ascii')
-            # scid_based_64_encoded = base64.b64encode(
-            #     scid_bytes).decode('ascii')
-            # url = url_prefix+scid_based_64_encoded
-
-            formdata = dict()
-            formdata["q"] = "683749x371x0"
-
-            yield scrapy.FormRequest(url, formdata=formdata, callback=self.parse)
-            break
+            formdata = {"q": scid}
+            yield scrapy.FormRequest(url, formdata=formdata, meta={'scid': scid}, callback=self.parse)
 
     def parse(self, response):
-        capacity = int(response.xpath('//li/div').get()
-                       [5:-10].replace(",", ""))
-
-    # def parse_block(self, response):
-    #     time.sleep(random.random())
-    #     ua = UserAgent()
-    #     if not validation(response):
-    #         time.sleep(2)
-    #         yield scrapy.Request(url=response.url, meta={'block': response['block']}, callback=self.parse_block, headers={'User-Agent': ua.random})
-    #     block = response.meta['block']
-    #     tx_num = response.selector.css('.d-flex.align-items-center')
-    #     if len(tx_num) != 5:
-    #         return 0
-    #     tx_num = tx_num[0]
-    #     tx_num = tx_num.css('::text').extract()
-    #     tx_num = tx_num[1]
-    #     tx_num = int(tx_num[12:-20])
-    #     page = math.ceil(tx_num/50)
-    #     for p in range(1, page+1):
-    #         # print("block",block,"  page:",p)
-    #         head = {'User-Agent': ua.random}
-    #         url_page = "https://etherscan.io/txs?block=" + \
-    #             str(block)+"&p="+str(p)
-    #         yield scrapy.Request(url=url_page, callback=self.parse_addr_url, headers=head)
-
-    # def parse_addr_url(self, response):
-    #     time.sleep(random.random())
-    #     addr_list = []
-    #     ua = UserAgent()
-    #     if not validation(response):
-    #         time.sleep(1)
-    #         yield scrapy.Request(url=response.url, callback=self.parse_addr_url, headers={'User-Agent': ua.random})
-    #     for i in response.css('.far.fa-file-alt.text-secondary + span'):
-    #         i = i.css('a')
-    #         addr_list.append(i.css('::attr(href)').extract()[0][9:])
-    #     for i in response.css('.far.fa-file-alt.text-secondary + a'):
-    #         addr_list.append(i.css('::attr(href)').extract()[0][9:])
-    #     for addr in addr_list:
-    #         # get true code
-    #         head = {'User-Agent': ua.random}
-    #         url_contract = "https://etherscan.io/address/%s#code" % addr
-    #         yield scrapy.Request(url=url_contract, dont_filter=True, meta={'a': addr}, callback=self.parse__contract, headers=head)
-    #         # if it is not in db
-
-    # def parse__contract(self, response):
-    #     ua = UserAgent()
-    #     if not validation(response):
-    #         time.sleep(2)
-    #         head = {'User-Agent': ua.random}
-    #         yield scrapy.Request(url=response.url, dont_filter=True, meta={'a': response.meta['a']}, callback=self.parse__contract, headers=head)
-    #     addr = response.meta['a']
-    #     text = response.selector.css('pre#editor::text').extract()
-    #     if len(text) != 0:
-    #         print("111")
-    #         code = text[0]
-    #         code = HTMLParser().unescape(code)
-    #         name = response.css('.h6.font-weight-bold.mb-0::text').extract()
-    #         name = name[0]
-    #         doc = ContractItem()
-    #         doc['addr'] = addr
-    #         doc['name'] = name
-    #         doc['code'] = code
-    #         yield doc
+        capacity = response.xpath('//li/div').get()[5:-10].replace(",", "")
+        scid = response.meta['scid']
+        with open('scid_capacity.csv', 'a') as fd:
+            writer = csv.writer(fd)
+            writer.writerow([scid, capacity])

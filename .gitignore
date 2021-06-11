@@ -3,3 +3,4 @@
 __pycache__
 *.csv
 *.bz2
+.DS_Store
