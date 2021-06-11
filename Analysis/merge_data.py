@@ -1,18 +1,6 @@
-from os import sched_get_priority_min
-from ssl import get_server_certificate
-import scrapy
-import math
-import time
-from scrapy.selector import Selector
-from html.parser import HTMLParser
-from fake_useragent import UserAgent
-from scrapy.http import FormRequest
 from pathlib import Path
-import random
-import base64
-import csv
-import pandas as pd
 
+import pandas as pd
 
 if __name__ == '__main__':
     channel_file_path = Path("../peruned_edges.csv")

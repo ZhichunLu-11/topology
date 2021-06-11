@@ -1,12 +1,13 @@
 import sys
 import time
-from cli.common import DatasetFile
+
 import click
 import networkx as nx
 import pandas as pd
-from cli.parser import ChannelAnnouncement, ChannelUpdate, NodeAnnouncement
 from tqdm import tqdm
-from datetime import datetime
+
+from cli.common import DatasetFile
+from cli.parser import ChannelAnnouncement, ChannelUpdate, NodeAnnouncement
 
 
 @click.group()
