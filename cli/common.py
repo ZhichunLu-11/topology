@@ -1,14 +1,16 @@
-import click
 import bz2
+
+import click
 from pyln.proto.primitives import varint_decode
+
 from cli.parser import parse
 
 
 class DatasetStream:
-    def __init__(self, file_stream, decode=True):
+    def __init__(self, file_stream, filename, decode=True):
         self.stream = file_stream
         self.decode = decode
-
+        self.filename = filename
         # Read header
         header = self.stream.read(4)
         assert len(header) == 4
@@ -44,5 +46,6 @@ class DatasetFile(click.File):
         self.decode = decode
 
     def convert(self, value, param, ctx):
-        f = bz2.open(value, "rb") if value.endswith(".bz2") else open(value, "rb")
-        return DatasetStream(f, self.decode)
+        f = bz2.open(value, "rb") if value.endswith(
+            ".bz2") else open(value, "rb")
+        return DatasetStream(f, value, self.decode)

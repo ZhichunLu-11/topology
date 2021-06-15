@@ -1,3 +1,4 @@
+import datetime
 import sys
 import time
 
@@ -31,6 +32,9 @@ def restore(dataset, timestamp=None, fmt='dot'):
     if timestamp is None:
         timestamp = time.time()
 
+    date = dataset.filename[7:15]
+    timestamp = time.mktime(
+        datetime.datetime.strptime(date, "%Y%m%d").timetuple())
     cutoff = timestamp - 2 * 7 * 24 * 3600
     channels = {}
     nodes = {}
@@ -141,7 +145,8 @@ def restore(dataset, timestamp=None, fmt='dot'):
         g.add_edge(c["source"], c["destination"], scid=scid, **c)
 
     pruned_edges = pd.DataFrame(channels).T
-    pruned_edges.to_csv(r'peruned_edges.csv', index=True, header=True)
+    pruned_edges.to_csv(r'channels_{}.csv'.format(date),
+                        index=True, header=True)
     if fmt == 'dot':
         print(nx.nx_pydot.to_pydot(g))
 

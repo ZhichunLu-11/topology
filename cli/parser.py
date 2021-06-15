@@ -1,8 +1,6 @@
-from binascii import hexlify
-
-
 import io
 import struct
+from binascii import hexlify
 
 
 class ChannelAnnouncement(object):
